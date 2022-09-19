@@ -14,7 +14,7 @@ equation:
     function_call:datatype (Identifier | (Pointer Identifier)) (LPAREN params | LPAREN) RPAREN SemiColon;
     function_definition:datatype (Identifier | (Pointer Identifier)) (LPAREN params_declaration | LPAREN) RPAREN LBrace code RBrace;
 
-    code: function_call | variable|variable_initialization1|(equ SemiColon) | variable_initialization2 | SemiColon | code (code|Return equ  SemiColon);
+    code: function_call | variable|variable_initialization1|(equ SemiColon) | variable_initialization2 | SemiColon |forloop1| code (code|Return equ  SemiColon);
 
     params_declaration:params_declaration Comma params_declaration|param_declaration;
     param_declaration: datatype Identifier;
@@ -29,6 +29,9 @@ equation:
     equ:  equ (PLUS) term| term | equ (MINUS) term ;
     term : term (TIMES) factor| factor;
     factor: LPAREN equ RPAREN | (IntValue | FloatValue | CharValue| Identifier);
+    compare: Identifier LT (Identifier | IntValue);
+    variterate:Identifier (Increment|Decrement);
+    forloop1: For LPAREN (variable|variable_initialization1|variable_initialization2) SemiColon compare SemiColon variterate RPAREN;
 
 datatype:
     datat {System.out.println("datatype.");};
@@ -72,9 +75,15 @@ MINUS: '-' {System.out.println("Minus");};
 TIMES: '*'  {System.out.println("Times");};
 DIV: '/' {System.out.println("Div");};
 Equals: '=' {System.out.println("Equal");};
+LT:'<';
+Increment: '++';
+Decrement: '--';
 
 IntValue: ([0-9]+|'-'[0-9]+) {System.out.println("Number");};
 CharValue: [a-zA-Z] {System.out.println("Char");};
 FloatValue: ([0-9]+'.'[0-9]+|'-'[0-9]+'.'[0-9]+) {System.out.println("Float value");};
+
+For: 'for';
+Colon:':';
 
 WS: [ \r\n\t] + -> skip;
