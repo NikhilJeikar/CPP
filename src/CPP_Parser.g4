@@ -12,10 +12,10 @@ equation:
 
     functions: (function_definition | function_declaration);
     function_declaration:function_type_declaration (Identifier | (Mult Identifier)) (LPAREN params_declaration | LPAREN) RPAREN SemiColon;
-    function_call:Identifier (LPAREN params | LPAREN) RPAREN SemiColon;
+    function_call:(Mult* Identifier) (LPAREN params | LPAREN) RPAREN ;
     function_definition:function_type_declaration (Identifier | (Mult Identifier)) (LPAREN params_declaration | LPAREN) RPAREN LBrace (code RBrace|RBrace);
 
-    code: function_call |variable_initialization|for |if|(expression SemiColon) | SemiColon|Comment|MultilineComment|Return expression  SemiColon| code code;
+    code: function_call SemiColon |variable_initialization|for |if|(expression SemiColon) | SemiColon|Comment|MultilineComment|Return expression  SemiColon| code code;
 
     params_declaration:params_declaration Comma params_declaration|param_declaration;
     param_declaration: data_type_declaration Identifier;
@@ -55,7 +55,7 @@ expression:
     logical_or_exp: logical_or_exp LogicalOr conditional_exp|conditional_exp;
     conditional_exp:conditional_exp Conditional assignment_exp|assignment_exp;
     assignment_exp:assignment_exp assignment end|end;
-    end: LPAREN mathematical_expression RPAREN | (IntValue | FloatValue | CharValue| Identifier|StringValue);
+    end: LPAREN mathematical_expression RPAREN | (IntValue | FloatValue | CharValue| Identifier|StringValue|function_call);
 
 conditional_expression:
     mathematical_expression ;
