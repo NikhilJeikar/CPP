@@ -2,7 +2,7 @@ grammar CPP_Parser;
 
 equation:
     exp {System.out.println("success.");};
-    exp: (header | variable | variable_initialization1) functions* |functions| SemiColon;
+    exp: (header | variable | variable_initialization|SemiColon)* functions* |functions| SemiColon;
 
     header: header header|include_macro|define_macro|pragma_macro;
 
@@ -12,16 +12,16 @@ equation:
 
     functions: (function_definition | function_declaration);
     function_declaration:function_type_declaration (Identifier | (Mult Identifier)) (LPAREN params_declaration | LPAREN) RPAREN SemiColon;
-    function_call:function_type_declaration (Identifier | (Mult Identifier)) (LPAREN params | LPAREN) RPAREN SemiColon;
+    function_call:Identifier (LPAREN params | LPAREN) RPAREN SemiColon;
     function_definition:function_type_declaration (Identifier | (Mult Identifier)) (LPAREN params_declaration | LPAREN) RPAREN LBrace (code RBrace|RBrace);
 
-    code: function_call |variable_initialization|for |if|(expression SemiColon) | SemiColon| code (code|Return expression  SemiColon);
+    code: function_call |variable_initialization|for |if|(expression SemiColon) | SemiColon|Comment|MultilineComment|Return expression  SemiColon| code code;
 
     params_declaration:params_declaration Comma params_declaration|param_declaration;
     param_declaration: data_type_declaration Identifier;
 
     params:params Comma params|param;
-    param: (Identifier | IntValue | FloatValue | CharValue);
+    param: (Identifier | IntValue | FloatValue | CharValue|StringValue|expression);
 
     variable_initialization: variable|variable_initialization1|variable_initialization2;
     variable: data_type_declaration (Identifier (Comma Identifier)*) SemiColon;
@@ -55,7 +55,7 @@ expression:
     logical_or_exp: logical_or_exp LogicalOr conditional_exp|conditional_exp;
     conditional_exp:conditional_exp Conditional assignment_exp|assignment_exp;
     assignment_exp:assignment_exp assignment end|end;
-    end: LPAREN mathematical_expression RPAREN | (IntValue | FloatValue | CharValue| Identifier);
+    end: LPAREN mathematical_expression RPAREN | (IntValue | FloatValue | CharValue| Identifier|StringValue);
 
 conditional_expression:
     mathematical_expression ;
@@ -70,7 +70,7 @@ conditional_expression:
     conditional_logical_or_exp: conditional_logical_or_exp LogicalOr conditional_conditional_exp|conditional_conditional_exp;
     conditional_conditional_exp:conditional_conditional_exp Conditional conditional_assignment_exp|conditional_assignment_exp;
     conditional_assignment_exp:conditional_assignment_exp assignment conditional_end|conditional_end;
-    conditional_end: LPAREN conditional_mathematical_expression RPAREN | (IntValue | FloatValue | CharValue| Identifier);
+    conditional_end: LPAREN conditional_mathematical_expression RPAREN | (IntValue | FloatValue | CharValue| Identifier|StringValue);
 
 data_type_declaration:
     data_type_declaration_decl {System.out.println("datatype.");};
@@ -169,7 +169,9 @@ LBrace: '{' {System.out.println("LCurly");};
 RBrace: '}' {System.out.println("RCurly");};
 
 IntValue: ([0-9]+|'-'[0-9]+) {System.out.println("Number");};
-CharValue: [a-zA-Z] {System.out.println("Char");};
+CharValue: '\''[a-zA-Z]'\'' {System.out.println("Char");};
 FloatValue: ([0-9]+'.'[0-9]+|'-'[0-9]+'.'[0-9]+) {System.out.println("Float value");};
-
+StringValue:'"'[a-z A-Z0-9\n\t\r]*'"';
+Comment: '//'[a-z A-Z0-9]*;
+MultilineComment:'/*'[a-z A-Z0-9\n\t\r]*'*/';
 WS: [ \r\n\t] + -> skip;
