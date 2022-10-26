@@ -15,7 +15,7 @@ equation:
     function_call:(Mult* Identifier) (LPAREN params | LPAREN) RPAREN ;
     function_definition:function_type_declaration (Identifier | (Mult Identifier)) (LPAREN params_declaration | LPAREN) RPAREN LBrace (code RBrace|RBrace);
 
-    code: function_call SemiColon |variable_initialization|for |if|(expression SemiColon) | SemiColon|Comment|MultilineComment|Return expression  SemiColon| code code;
+    code: function_call SemiColon |variable_initialization|for|while|do_while |if|(expression SemiColon) | SemiColon|Comment|MultilineComment|Return expression  SemiColon| code code;
 
     params_declaration:params_declaration Comma params_declaration|param_declaration;
     param_declaration: data_type_declaration Identifier;
@@ -32,6 +32,9 @@ equation:
     for1:For LPAREN ((variable_initialization1|variable_initialization2)|SemiColon) ((conditional_expression SemiColon)|SemiColon) (((Identifier assignment expression)|(Inc|Dec)Identifier|Identifier(Inc|Dec))|SemiColon) RPAREN;
     for2: For LPAREN data_type_definition Identifier Colon Identifier RPAREN;
     for3: For LPAREN data_type_definition BitwiseAnd Identifier Colon Identifier RPAREN;
+
+    while: While LPAREN (conditional|True|False) RPAREN (SemiColon|(LBrace (code RBrace|RBrace)));
+    do_while:Do (LBrace (code RBrace|RBrace)) While LPAREN (conditional|True|False) RPAREN SemiColon;
 
     if: IF LPAREN if_conditional RPAREN (LBrace code |LBrace) (RBrace| RBrace else);
     if_conditional: LPAREN if_conditional RPAREN|conditional|True|False| (Inc|Dec)Identifier|Identifier(Inc|Dec);
@@ -128,6 +131,8 @@ Exit: 'exit';
 True: 'true';
 False: 'false';
 Identifier: [a-zA-Z][a-zA-Z0-9]* {System.out.println("Identifier");};
+While: 'while';
+Do:'do';
 
 LShit: '<<';
 RShift: '>>';
